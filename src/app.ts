@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import notesRoutes from "./routes/notes.routes.js";
@@ -13,6 +14,9 @@ app.use("/v1/auth", authRoutes);
 
 // Notes routes
 app.use("/v1/notes", notesRoutes);
+
+// Serve static frontend files
+app.use(express.static(path.join(process.cwd(), "public")));
 
 // Global error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
