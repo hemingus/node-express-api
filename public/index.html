@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes API Test</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Notes API Test</h1>
+
+    <section>
+        <h2>Login</h2>
+        <input id="username" placeholder="Username" />
+        <input id="password" placeholder="Password" type="password" />
+        <button id="loginBtn">Login</button>
+        <pre id="loginResult"></pre>
+    </section>
+
+    <section>
+        <h2>Create Note</h2>
+        <input id="noteTitle" placeholder="Title" />
+        <textarea id="noteContent" placeholder="Content"></textarea>
+        <input id="noteCategory" placeholder="Category" />
+        <button id="createBtn">Create Note</button>
+        <pre id="createResult"></pre>
+    </section>
+
+    <section>
+        <h2>Get Notes</h2>
+        <button id="fetchBtn">Fetch Notes</button>
+        <pre id="notesResult"></pre>
+    </section>
+
+    <script type="module" src="login.js"></script>
+    <script type="module" src="notes.js"></script>
+</body>
+</html>
