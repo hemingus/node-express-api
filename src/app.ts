@@ -3,11 +3,15 @@ import path from "path";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import notesRoutes from "./routes/notes.routes.js";
+import healthRoutes from "./routes/health.routes.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Health check
+app.use("/v1/health", healthRoutes);
 
 // Auth routes
 app.use("/v1/auth", authRoutes);
