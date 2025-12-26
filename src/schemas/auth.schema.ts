@@ -18,26 +18,12 @@ export const loginSchema = z.object({
 /**
  * Refresh token request headers
  * GET /v1/auth/refresh
- */
-export const refreshSchema = z.object({
-    headers: z.object({
-        "x-refreshtoken": z
-        .string()
-        .min(1, "Refresh token is required"),
-    }),
-});
-
-/**
+ * 
  * Logout request headers
  * POST /v1/auth/logout
  */
-export const logoutSchema = z.object({
-    headers: z.object({
-        authorization: z
-        .string()
-        .regex(/^Bearer\s.+$/, "Authorization header must be Bearer token"),
-        "x-refreshtoken": z
-        .string()
-        .min(1, "Refresh token is required"),
-    }),
+
+export const refreshTokenHeaderSchema = z.object({
+    "x-refreshtoken": z.string().min(1, "Refresh token is required")
 });
+
