@@ -2,7 +2,7 @@ import { Router } from "express";
 import { login, refresh, logout } from "../controllers/auth.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
 import { validate } from "../middleware/validate.middleware.js";
-import { loginSchema } from "../schemas/auth.schema.js";
+import { loginSchema, refreshTokenHeaderSchema } from "../schemas/auth.schema.js";
 
 const router = Router();
 
@@ -17,6 +17,7 @@ router.get("/refresh", refresh);
 router.post(
     "/logout",
     requireAuth,
+    validate({ headers: refreshTokenHeaderSchema }),
     logout
 );
 
