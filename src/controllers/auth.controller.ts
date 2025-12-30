@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { signToken, verifyToken } from "../utils/jwt.js";
-import { activeSessions } from "../data/sessions.store.js";
+import { addSession, removeSession, isSessionActive } from "../data/sessions.store.js";
 import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 
 export function login(req: Request, res: Response): void {
     const { username } = req.body as { username: string; password: string };
 
     const sid = uuid();
-    activeSessions.add(sid);
+    addSession(sid);
 
     const payload = { sub: username, sid };
 
@@ -29,7 +29,7 @@ export function refresh(req: Request, res: Response): void {
     try {
         const payload = verifyToken(refreshToken);
 
-        if (!activeSessions.has(payload.sid)) {
+        if (isSessionActive(payload.sid)) {
             res.status(401).json({ error: "Session is no longer active" });
             return;
         }
@@ -47,7 +47,7 @@ export function refresh(req: Request, res: Response): void {
 
 export function logout(req: AuthenticatedRequest, res: Response): void {
     if (req.user) {
-        activeSessions.delete(req.user.sid);
+        removeSession(req.user.sid);
     }
 
     res.sendStatus(204);
