@@ -6,11 +6,11 @@
 export const activeSessions = new Set<string>();
 
 export function addSession(sid: string): void {
-  activeSessions.add(sid);
+    activeSessions.add(sid);
 }
 
 export function removeSession(sid: string): void {
-     activeSessions.delete(sid);
+    activeSessions.delete(sid);
 }
 
 export function isSessionActive(sid: string): boolean {
