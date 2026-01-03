@@ -3,9 +3,22 @@ import { v4 as uuid } from "uuid";
 import { signToken, verifyToken } from "../utils/jwt.js";
 import { addSession, removeSession, isSessionActive } from "../data/sessions.store.js";
 import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
+import { users } from "../data/users.store.js";
 
 export function login(req: Request, res: Response): void {
-    const { username } = req.body as { username: string; password: string };
+    const { username, password } = req.body as { username: string; password: string };
+
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (!user) {
+        res.status(401).json({
+            error: {
+                code: "INVALID_CREDENTIALS",
+                message: "Invalid username or password",
+            },
+        });
+        return;
+    }
 
     const sid = uuid();
     addSession(sid);
