@@ -4,6 +4,7 @@ import { signToken, verifyToken } from "../utils/jwt.js";
 import { addSession, removeSession, isSessionActive } from "../data/sessions.store.js";
 import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 import { users } from "../data/users.store.js";
+import { logger } from "../utils/logger.js";
 
 export function login(req: Request, res: Response): void {
     const { username, password } = req.body as { username: string; password: string };
@@ -22,6 +23,8 @@ export function login(req: Request, res: Response): void {
 
     const sid = uuid();
     addSession(sid);
+
+    logger.auth("LOGIN", { user: user.username, sid });
 
     const payload = { sub: username, sid };
 
@@ -61,6 +64,8 @@ export function refresh(req: Request, res: Response): void {
 export function logout(req: AuthenticatedRequest, res: Response): void {
     if (req.user) {
         removeSession(req.user.sid);
+        const { sub, sid } = req.user;
+        logger.auth("LOGOUT", { user: sub, sid });
     }
 
     res.sendStatus(204);
