@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { signToken, verifyToken } from "../utils/jwt.js";
 import { addSession, removeSession, isSessionActive } from "../data/sessions.store.js";
-import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 import { users } from "../data/users.store.js";
 import { logger } from "../utils/logger.js";
 
@@ -12,6 +11,7 @@ export function login(req: Request, res: Response): void {
     const user = users.find(u => u.username === username && u.password === password);
 
     if (!user) {
+        logger.auth("LOGIN_FAILED", { username });
         res.status(401).json({
             error: {
                 code: "INVALID_CREDENTIALS",
@@ -61,7 +61,7 @@ export function refresh(req: Request, res: Response): void {
     }
 }
 
-export function logout(req: AuthenticatedRequest, res: Response): void {
+export function logout(req: Request, res: Response): void {
     if (req.user) {
         removeSession(req.user.sid);
         const { sub, sid } = req.user;
