@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyToken, AuthJwtPayload } from "../utils/jwt.js";
+import { verifyToken } from "../utils/jwt.js";
 import { isSessionActive } from "../data/sessions.store.js";
-
-export interface AuthenticatedRequest extends Request {
-    user?: AuthJwtPayload;
-}
+import { logger } from "../utils/logger.js";
 
 /**
  * Middleware som beskytter endepunkter
@@ -15,10 +12,11 @@ export interface AuthenticatedRequest extends Request {
  *  - session aktiv (sid)
  */
 
-export function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+export function requireAuth(req: Request, res: Response, next: NextFunction): void {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        logger.auth("MISSING_TOKEN");
         res.status(401).json({ error: "Missing Authorization header" });
         return;
     }
@@ -29,6 +27,7 @@ export function requireAuth(req: AuthenticatedRequest, res: Response, next: Next
         const payload = verifyToken(token);
 
         if (!isSessionActive(payload.sid)) {
+            logger.auth("INVALID_SESSION", { sid: payload.sid });
             res.status(401).json({ error: "Session is no longer active" });
             return;
         }
@@ -36,6 +35,7 @@ export function requireAuth(req: AuthenticatedRequest, res: Response, next: Next
         req.user = payload;
         next();
     } catch {
+        logger.auth("INVALID_TOKEN");
         res.status(401).json({ error: "Invalid or expired token" });
     }
 }
