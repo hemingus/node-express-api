@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { notes, Note } from "../data/notes.store.js";
+import { logger } from "../utils/logger.js";
 
 // GET /v1/notes?q=&sort=
 export function listNotes(req: Request, res: Response): void {
     const { q, sort } = req.query as { q?: string; sort?: "asc" | "desc" };
 
-    let result = [...notes];
+    let result = [...notes].filter((n) => n.createdBy === req.user.sub);
 
     if (q) {
         const query = q.toLowerCase();
@@ -51,9 +52,15 @@ export function createNote(req: Request, res: Response): void {
         content,
         category,
         tags,
+        createdBy: req.user.sub,
         createdAt: now,
         updatedAt: now
     };
+
+    logger.notes("NOTE_CREATED", {
+        noteId: note.id,
+        user: req.user.sub,
+    });
 
     notes.push(note);
 
