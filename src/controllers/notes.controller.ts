@@ -87,6 +87,7 @@ export function updateNote(req: Request, res: Response): void {
 
     note.updatedAt = Date.now();
 
+    logger.notes(`NOTE UPDATED, id: ${note.id}`);
     res.status(200).json(note);
 }
 
